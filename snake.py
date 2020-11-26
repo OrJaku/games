@@ -1,10 +1,14 @@
 import pygame
 import time
+import os 
 
+dir_path = os.path.dirname(os.path.realpath(__file__))
+          
 class Player:
     x = 50
     y = 50
     direction = 0
+    score = 0
     width = 10
     height = 10
     speed = 2
@@ -37,6 +41,7 @@ class App:
     window_w = 400
     player = None
     level = 5
+    pygame.font.init() 
 
     def __init__(self):
         self.running = True
@@ -53,6 +58,22 @@ class App:
                 self.player.width,
                 self.player.height
             ))
+    def food(self):
+        pygame.draw.rect(
+            self.window, 
+            (250, 250, 200), 
+            (
+                100, 
+                200, 
+                8,
+                8
+            ))
+
+    def scorring(self):
+        self.font_path = "dir_path" + "\\" + "\\" + "AGENCYR.TTF"
+        self.myfont = pygame.font.SysFont(self.font_path, 20)
+        self.textsurface = self.myfont.render(f'Score: {self.player.score}', False, (250, 255, 255))
+        self.window.blit(self.textsurface,(0,0))
 
     def on_init(self):
         pygame.init()
@@ -60,7 +81,10 @@ class App:
         pygame.display.set_caption("The Game")
         self.running = True
         self.snake()
+        self.scorring()
+
         pygame.display.flip()
+        time.sleep(1)
 
     def on_event(self, event):
         if event.type == pygame.QUIT:
@@ -75,6 +99,8 @@ class App:
     def on_render(self):
         self.window.fill((0,0,0))
         self.snake()
+        self.scorring()
+        self.food()
         pygame.display.flip()
 
     def on_execute(self):
@@ -103,9 +129,12 @@ class App:
 
             if (keys[pygame.K_a]):
                 self.player.width = 70
-
-            self.on_loop()
-            self.on_render()
+            if 0 <= self.player.x <= self.window_w - self.player.width  and \
+                0 <= self.player.y <= self.window_h - self.player.height: 
+                self.on_loop()
+                self.on_render()
+            else:
+                self.running = False
 
             time.sleep((1.0 / 10.0)/self.level)
 

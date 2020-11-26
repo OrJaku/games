@@ -1,9 +1,13 @@
 import pygame
 import time
+import random
 import os 
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
-          
+window_h = 400
+window_w = 400
+
+
 class Player:
     x = 50
     y = 50
@@ -11,17 +15,17 @@ class Player:
     score = 0
     width = 10
     height = 10
-    speed = 2
+    step = 5
 
     def update(self):
         if self.direction == 0:
-            self.x = self.x + self.speed
+            self.x = self.x + self.step
         if self.direction == 1:
-            self.x = self.x - self.speed
+            self.x = self.x - self.step
         if self.direction == 2:
-            self.y = self.y - self.speed
+            self.y = self.y - self.step
         if self.direction == 3:
-            self.y = self.y + self.speed
+            self.y = self.y + self.step
 
     def right(self):
         self.direction = 0
@@ -35,18 +39,46 @@ class Player:
     def down(self):
         self.direction = 3
 
+class Food:
+
+    def __init__(self, window_w, window_h):
+        self.apple_w = 10
+        self.apple_h = 10
+        self.apple_x = random.randint(0, window_w - self.apple_w )
+        self.apple_y = random.randint(0, window_h - self.apple_h )
+
+    def apple(self, window):
+        pygame.draw.rect(
+            window, 
+            (250, 250, 200), 
+            (
+                self.apple_x, 
+                self.apple_y, 
+                self.apple_w,
+                self.apple_h
+            ))
+        return {
+            "x": self.apple_x,
+            "y": self.apple_y,
+            "w": self.apple_w,
+            "h": self.apple_h
+        }
+
 
 class App:
-    window_h = 300
-    window_w = 400
+
     player = None
-    level = 5
+    level = 2
+
     pygame.font.init() 
 
-    def __init__(self):
+    def __init__(self, window_w, window_h):
         self.running = True
         self.windows = None
         self.player = Player()
+        self.food = Food(window_w, window_h)
+        self.window_h = window_h
+        self.window_w = window_w
 
     def snake(self):
         pygame.draw.rect(
@@ -58,16 +90,12 @@ class App:
                 self.player.width,
                 self.player.height
             ))
-    def food(self):
-        pygame.draw.rect(
-            self.window, 
-            (250, 250, 200), 
-            (
-                100, 
-                200, 
-                8,
-                8
-            ))
+        return {
+            "x": self.player.x,
+            "y": self.player.y,
+            "w": self.player.width,
+            "h": self.player.height
+        }
 
     def scorring(self):
         self.font_path = "dir_path" + "\\" + "\\" + "AGENCYR.TTF"
@@ -98,9 +126,10 @@ class App:
 
     def on_render(self):
         self.window.fill((0,0,0))
-        self.snake()
-        self.scorring()
-        self.food()
+        self.apple = self.food.apple(self.window)
+        self.s = self.snake()
+        if self.s['x'] + 5 == self.apple['x']+5 and self.s['y'] + 5 == self.apple['y']+5:
+            print("OK")
         pygame.display.flip()
 
     def on_execute(self):
@@ -135,12 +164,12 @@ class App:
                 self.on_render()
             else:
                 self.running = False
-
+            
             time.sleep((1.0 / 10.0)/self.level)
 
         self.clean()
 
 
 if __name__ == "__main__":
-    theApp = App()
+    theApp = App(window_w, window_h)
     theApp.on_execute()

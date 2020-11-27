@@ -18,7 +18,7 @@ class Player:
     width = 12
     height = 12
     step = 6
-    length = 10
+    length = 8
 
     def update(self):
         if self.direction == 0:
@@ -140,7 +140,8 @@ class App:
         self.snake()
         self.snake_list.append([self.player.x, self.player.y])
         self.scorring()
-        for i in self.snake_list:
+        print(self.player.length)
+        for i in self.snake_list[-self.player.length:]:
             self.snake_tail(i[0], i[1])
 
         snake_x_center = self.player.x + (self.player.width/2)
@@ -152,6 +153,7 @@ class App:
      
         if get_apple:
             self.player.score += 1
+            self.player.length += 4
             self.food.set()
             get_apple = False
         pygame.display.flip()

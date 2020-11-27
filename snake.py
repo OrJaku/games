@@ -17,7 +17,7 @@ class Player:
     score = 0
     width = 12
     height = 12
-    step = 6
+    step = 12
     length = 4
 
     def update(self):
@@ -71,7 +71,6 @@ class App:
     player = None
     level = 2
 
-
     def __init__(self, window_w, window_h):
         self.running = True
         self.windows = None
@@ -80,6 +79,7 @@ class App:
         self.window_h = window_h
         self.window_w = window_w
         self.snake_list = []
+
 
     def snake(self):
         pygame.draw.rect(
@@ -189,8 +189,7 @@ class App:
                 self.on_render()
             else:
                 self.running = False
-            
-            time.sleep((1.0 / 10.0)/self.level)
+            time.sleep((1.0 / 4.0)/self.level)
 
         self.clean()
 

@@ -44,43 +44,26 @@ class Player:
 class Food:
 
     def __init__(self, window_w, window_h):
-        self.apple_w = 12
-        self.apple_h = 12
-        self.apple_x = random.randint(0, window_w - self.apple_w )
-        self.apple_y = random.randint(0, window_h - self.apple_h )
+        self.random_x = 120
+        self.random_y = 120
+
 
     def set(self):
-        self.apple_x = random.randint(0, window_w - self.apple_w )
-        self.apple_y = random.randint(0, window_h - self.apple_h )
+        self.random_x = random.randint(0, window_w - self.apple_w )
+        self.random_y = random.randint(0, window_h - self.apple_h )
 
     def apple(self, window):
+        self.apple_w = 12
+        self.apple_h = 12
         pygame.draw.rect(
             window, 
             (250, 250, 200), 
             (
-                self.apple_x, 
-                self.apple_y, 
+                self.random_x, 
+                self.random_y, 
                 self.apple_w,
                 self.apple_h
             ))
-
-        circuit_1x = [*range(self.apple_x, self.apple_x + self.apple_w, 1)]
-        circuit_2x = list(map(lambda x:x + self.apple_w, circuit_1x))
-        circuit_1y = [*range(self.apple_y, self.apple_y + self.apple_h, 1)]
-        circuit_2y = list(map(lambda y:y + self.apple_h, circuit_1y))
-        # circuit_all = circuit_1 + circuit_2 + circuit_3 + circuit_4
-        poss = []
-        def get_possition_x(circuit_1, circuit_2, point):
-            for i in circuit_1:
-                elem = []
-                elem.append(i)
-                elem.append(circuit_2[point])
-                poss.append(elem) 
-  
-
-        return {
-            "circuit": poss,
-        }
 
 
 class App:
@@ -120,6 +103,10 @@ class App:
         self.myfont = pygame.font.SysFont(self.font_path, 20)
         self.textsurface = self.myfont.render(f'Score: {self.player.score}', False, (250, 255, 255))
         self.window.blit(self.textsurface,(0,0))
+    
+    def frame(self):
+        pygame.draw.rect(self.window, (20, 25, 100), (0, 0, self.window_w, self.window_h), 2)
+
 
     def on_init(self):
         pygame.init()
@@ -127,8 +114,8 @@ class App:
         pygame.display.set_caption("The Game")
         self.running = True
         self.snake()
+        self.frame()
         self.scorring()
-
         pygame.display.flip()
         time.sleep(1)
 
@@ -146,18 +133,16 @@ class App:
         get_apple = False
         self.window.fill((0,0,0))
         self.apple = self.food.apple(self.window)
+        self.frame()
         self.s = self.snake()
         self.scorring()
         snake_x_center = self.s['x'] + (self.player.width/2)
-        # snake_x_center_area = [snake_x_center - 2 , snake_x_center - 1, snake_x_center, snake_x_center + 1, snake_x_center + 2]
         snake_y_center = self.s['y'] + (self.player.height/2)
-        # snake_y_center_area = [snake_y_center - 2 , snake_y_center - 1, snake_y_center, snake_y_center + 1, snake_y_center + 2]
 
-        if self.food.apple_x <= snake_x_center <= (self.food.apple_x + self.food.apple_w) and \
-            self.food.apple_y <= snake_y_center <= (self.food.apple_y + self.food.apple_h):
+        if self.food.random_x <= snake_x_center <= (self.food.random_x + self.food.apple_w) and \
+            self.food.random_y <= snake_y_center <= (self.food.random_y + self.food.apple_h):
             get_apple = True 
-        else:
-            pass
+     
         if get_apple:
             self.player.score += 1
             self.food.set()

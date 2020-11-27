@@ -17,7 +17,8 @@ class Player:
     score = 0
     width = 12
     height = 12
-    step = 4
+    step = 6
+    length = 10
 
     def update(self):
         if self.direction == 0:
@@ -67,11 +68,9 @@ class Food:
 
 
 class App:
-
     player = None
     level = 2
 
-    pygame.font.init() 
 
     def __init__(self, window_w, window_h):
         self.running = True
@@ -80,6 +79,7 @@ class App:
         self.food = Food(window_w, window_h)
         self.window_h = window_h
         self.window_w = window_w
+        self.snake_list = []
 
     def snake(self):
         pygame.draw.rect(
@@ -91,22 +91,25 @@ class App:
                 self.player.width,
                 self.player.height
             ))
-        return {
-            "x": self.player.x,
-            "y": self.player.y,
-            "w": self.player.width,
-            "h": self.player.height
-        }
-
+    def snake_tail(self, x , y):
+        pygame.draw.rect(
+            self.window, 
+            (180, 100, 0), 
+            (
+                x, 
+                y, 
+                self.player.width,
+                self.player.height
+            ))
+    
     def scorring(self):
         self.font_path = "dir_path" + "\\" + "\\" + "AGENCYR.TTF"
         self.myfont = pygame.font.SysFont(self.font_path, 20)
         self.textsurface = self.myfont.render(f'Score: {self.player.score}', False, (250, 255, 255))
-        self.window.blit(self.textsurface,(0,0))
+        self.window.blit(self.textsurface,(3,3))
     
     def frame(self):
         pygame.draw.rect(self.window, (20, 25, 100), (0, 0, self.window_w, self.window_h), 2)
-
 
     def on_init(self):
         pygame.init()
@@ -134,10 +137,14 @@ class App:
         self.window.fill((0,0,0))
         self.apple = self.food.apple(self.window)
         self.frame()
-        self.s = self.snake()
+        self.snake()
+        self.snake_list.append([self.player.x, self.player.y])
         self.scorring()
-        snake_x_center = self.s['x'] + (self.player.width/2)
-        snake_y_center = self.s['y'] + (self.player.height/2)
+        for i in self.snake_list:
+            self.snake_tail(i[0], i[1])
+
+        snake_x_center = self.player.x + (self.player.width/2)
+        snake_y_center = self.player.y + (self.player.height/2)
 
         if self.food.random_x <= snake_x_center <= (self.food.random_x + self.food.apple_w) and \
             self.food.random_y <= snake_y_center <= (self.food.random_y + self.food.apple_h):

@@ -47,11 +47,19 @@ class Food:
     def __init__(self, window_w, window_h):
         self.random_x = 120
         self.random_y = 120
-
+        self.draw_lots_food = 0
+        self.window = None
+        self.apple_w = -1
+        self.apple_h = -1        
+        self.fish_w = -1
+        self.fish_h = -1
 
     def set(self):
         self.random_x = random.randint(0, window_w - self.apple_w )
         self.random_y = random.randint(0, window_h - self.apple_h )
+        self.draw_lots_food = random.randint(0,10)
+        self.start_time = time.time()
+
 
     def apple(self, window):
         self.apple_w = 12
@@ -66,6 +74,32 @@ class Food:
                 self.apple_h
             ))
 
+    def fish(self, window):
+        self.fish_w = 14
+        self.fish_h = 14
+        pygame.draw.rect(
+            window, 
+            (100, 50, 200), 
+            (
+                self.random_x, 
+                self.random_y, 
+                self.fish_w,
+                self.fish_h
+            ))
+
+
+    def choose_food(self, window):
+        if self.draw_lots_food >= 9:
+            self.fish(window)
+            self.put_fish = True
+            self.put_apple = False
+            food_kind = "fish"   
+        else:
+            self.apple(window)
+            self.put_fish = False
+            self.put_apple = True
+            food_kind = "apple"
+        return food_kind
 
 class App:
     player = None
@@ -91,6 +125,7 @@ class App:
                 self.player.width,
                 self.player.height
             ))
+
     def snake_tail(self, x , y):
         pygame.draw.rect(
             self.window, 
@@ -120,7 +155,7 @@ class App:
         self.frame()
         self.scorring()
         pygame.display.flip()
-        time.sleep(1)
+        time.sleep(0.5)
 
     def on_event(self, event):
         if event.type == pygame.QUIT:
@@ -133,9 +168,14 @@ class App:
         pygame.quit()
 
     def on_render(self):
-        get_apple = False
+        self.get_apple = False
+        self.get_fish = False
         self.window.fill((0,0,0))
-        self.apple = self.food.apple(self.window)
+        food_choose = self.food.choose_food(self.window)
+        if food_choose == "fish" and time.time() >= self.food.start_time + 6:
+            self.food.set()
+            self.food.choose_food(self.window)
+            
         self.frame()
         self.snake()
         self.snake_list.append([self.player.x, self.player.y])
@@ -148,23 +188,36 @@ class App:
         snake_y_center = self.player.y + (self.player.height/2)
 
         if self.food.random_x <= snake_x_center <= (self.food.random_x + self.food.apple_w) and \
-            self.food.random_y <= snake_y_center <= (self.food.random_y + self.food.apple_h):
-            get_apple = True 
-        
+            self.food.random_y <= snake_y_center <= (self.food.random_y + self.food.apple_h) and \
+                self.food.put_apple:
+            self.get_apple = True 
+
+        if self.food.random_x <= snake_x_center <= (self.food.random_x + self.food.fish_w) and \
+            self.food.random_y <= snake_y_center <= (self.food.random_y + self.food.fish_h) and \
+                self.food.put_fish:
+            self.get_fish = True 
      
-        if get_apple:
+        if self.get_apple:
             self.player.score += 1
             self.player.length += 1
             self.food.set()
-            get_apple = False
+            self.get_apple = False
+
+        if self.get_fish:
+            self.player.score += 3
+            self.player.length += 3
+            self.food.set()
+            self.get_fish = False
         pygame.display.flip()
 
-    def colision(self):
+    def collision(self):
         self.snake_head_position = [self.player.x, self.player.y]
         if self.snake_head_position in self.tail_length:
             self.running = False
+            print("COLLISION")
             print("Snake: ", self.player.x, self.player.y)
             print("Tail: ", self.tail_length)
+
 
     def on_execute(self):
         self.on_init()
@@ -196,7 +249,7 @@ class App:
                 self.on_render()
             else:
                 self.running = False
-            self.colision()
+            self.collision()
             time.sleep((1.0 / 4.0)/self.level)
 
         self.clean()

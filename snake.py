@@ -69,7 +69,7 @@ class Food:
 
 class App:
     player = None
-    level = 2
+    level = 3
 
     def __init__(self, window_w, window_h):
         self.running = True
@@ -125,7 +125,7 @@ class App:
     def on_event(self, event):
         if event.type == pygame.QUIT:
             self.running = False
-
+ 
     def on_loop(self):
         self.player.update()
 
@@ -140,7 +140,8 @@ class App:
         self.snake()
         self.snake_list.append([self.player.x, self.player.y])
         self.scorring()
-        for i in self.snake_list[-self.player.length:]:
+        self.tail_length = self.snake_list[-self.player.length:-1]
+        for i in self.tail_length:
             self.snake_tail(i[0], i[1])
 
         snake_x_center = self.player.x + (self.player.width/2)
@@ -149,13 +150,21 @@ class App:
         if self.food.random_x <= snake_x_center <= (self.food.random_x + self.food.apple_w) and \
             self.food.random_y <= snake_y_center <= (self.food.random_y + self.food.apple_h):
             get_apple = True 
+        
      
         if get_apple:
             self.player.score += 1
-            self.player.length += 2
+            self.player.length += 1
             self.food.set()
             get_apple = False
         pygame.display.flip()
+
+    def colision(self):
+        self.snake_head_position = [self.player.x, self.player.y]
+        if self.snake_head_position in self.tail_length:
+            self.running = False
+            print("Snake: ", self.player.x, self.player.y)
+            print("Tail: ", self.tail_length)
 
     def on_execute(self):
         self.on_init()
@@ -181,14 +190,13 @@ class App:
             if (keys[pygame.K_ESCAPE]):
                 self.running = False
 
-            if (keys[pygame.K_a]):
-                self.player.width = 70
             if 0 <= self.player.x <= self.window_w - self.player.width  and \
                 0 <= self.player.y <= self.window_h - self.player.height: 
                 self.on_loop()
                 self.on_render()
             else:
                 self.running = False
+            self.colision()
             time.sleep((1.0 / 4.0)/self.level)
 
         self.clean()

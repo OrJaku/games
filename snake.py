@@ -171,16 +171,21 @@ class App:
         self.get_apple = False
         self.get_fish = False
         self.window.fill((0,0,0))
+        self.snake_list.append([self.player.x, self.player.y])
+        self.tail_length = self.snake_list[-self.player.length:-1]
+
         food_choose = self.food.choose_food(self.window)
+        food_possition = [self.food.random_x, self.food.random_y]
+        if food_possition in self.tail_length:
+            self.food.set()
+
         if food_choose == "fish" and time.time() >= self.food.start_time + 6:
             self.food.set()
             self.food.choose_food(self.window)
             
         self.frame()
         self.snake()
-        self.snake_list.append([self.player.x, self.player.y])
         self.scorring()
-        self.tail_length = self.snake_list[-self.player.length:-1]
         for i in self.tail_length:
             self.snake_tail(i[0], i[1])
 
@@ -215,8 +220,8 @@ class App:
         if self.snake_head_position in self.tail_length:
             self.running = False
             print("COLLISION")
-            print("Snake: ", self.player.x, self.player.y)
-            print("Tail: ", self.tail_length)
+            print("Score: ", self.player.score)
+
 
 
     def on_execute(self):
@@ -248,7 +253,10 @@ class App:
                 self.on_loop()
                 self.on_render()
             else:
+                print("COLLISION")
+                print("Score: ", self.player.score)
                 self.running = False
+
             self.collision()
             time.sleep((1.0 / 4.0)/self.level)
 

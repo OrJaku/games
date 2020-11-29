@@ -1,0 +1,18 @@
+.mid_cell {
+    background-color: white;
+
+}
+
+.mid_cell input {
+    width: 15px;   
+    height: 15px;    
+ 
+}
+
+
+table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+  }
+
+

@@ -5,7 +5,8 @@
 
 .mid_cell input {
     width: 15px;   
-    height: 15px;    
+    height: 15px; 
+    text-align: center;   
  
 }
 

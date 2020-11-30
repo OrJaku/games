@@ -8,9 +8,9 @@ def board_game():
     if request.method == "POST":
         elements = request.form
         print("Elements", elements)
-        for i in elements:
+        # for i in elements:
             
-        
+    
     return render_template("board.html")
 
 if __name__ == '__main__':

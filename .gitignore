@@ -1,2 +1,3 @@
 *.TTF
 venv/
+__pycache__/

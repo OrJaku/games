@@ -22,9 +22,30 @@ for i in elem:
                 dict_elem_h[h].append(i[1])
             else:
                 dict_elem_h[h]=[i[1]]
-print( list(dict_elem_v.values())[0:3])
-for i in list(dict_elem_v.values())[0:3]:
-    dict_elem_c["cell_1"]=i[0:3]
+
+for n in [0, 1, 2]:
+    for i in list(dict_elem_h.values())[0:3]:
+        cell = f"cell_{n+1}"
+        if cell in dict_elem_c:
+            dict_elem_c[cell].append(i[0+(3*n):3+(3*n)])
+        else:
+            dict_elem_c[cell]=[i[0+(3*n):3+(3*n)]]
+
+for n in [3, 4, 5]:
+    for i in list(dict_elem_h.values())[3:6]:
+        cell = f"cell_{n+1}"
+        if cell in dict_elem_c:
+            dict_elem_c[cell].append(i[0+(3*(n-3)):3+(3*(n-3))])
+        else:
+            dict_elem_c[cell]=[i[0+(3*(n-3)):3+(3*(n-3))]]
+
+for n in [6, 7, 8]:
+    for i in list(dict_elem_h.values())[6:9]:
+        cell = f"cell_{n+1}"
+        if cell in dict_elem_c:
+            dict_elem_c[cell].append(i[0+(3*(n-6)):3+(3*(6-3))])
+        else:
+            dict_elem_c[cell]=[i[0+(3*(n-3)):3+(3*(n-3))]]
 
 print(dict_elem_c)
 # print("V", dict_elem_v)

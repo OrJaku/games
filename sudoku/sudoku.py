@@ -4,11 +4,16 @@ from board_structure import get_structure
 
 app = Flask(__name__)
 
+def differenc(lista_1, lista_2):
+    return (list(list(set(lista_1)-set(lista_2))))
+
+
 @app.route('/', methods=["GET", "POST"])
 def board_game():
     if request.method == "POST":
         numbers = ["1", "2", "3", "4", "5", "6", "7", "8", "9"]
         elements_get = request.form.items()
+        print(request.form)
         elements = [x for x in elements_get]
         structure = get_structure(elements)
         elem_call = structure['elem_call']
@@ -24,27 +29,16 @@ def board_game():
         # print(elem_call_list)
 
         for row in elem_horizontal_list:
-            
             i = 0
-            for value in row:
-                if value == "":
-                    for n in numbers:
-                        if n in row or n in elem_call_list[0] or n in elem_vertical_list[0] :
-                           continue
-                        else:
-                            row[i] = n
-                i += 1
-            row_number = str(c)
-            elem_horizontal[row_number] = row
-            c += 1
-        print(elem_horizontal)
-
-
-
-
-
-
-
+            current_numbers = numbers.copy()
+            print(current_numbers)
+            list_without_horizontal = differenc(current_numbers, row)
+            list_without_vertical = differenc(list_without_horizontal, elem_vertical_list[i])
+            # if i <= 2 :
+            #     c = 0
+            
+            # list_without_cell = differenc(list_without_vertical, elem_call_list[c])
+            print(list_without_vertical)
         return render_template("board.html")
 
     return render_template("board.html")

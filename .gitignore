@@ -1,3 +1,4 @@
 *.TTF
 venv/
 __pycache__/
+tes.py

@@ -72,51 +72,68 @@ elem_vertical_list = list(elem_vertical.values())
 elem_horizontal_list = list(elem_horizontal.values())
 elem_call_list = list(elem_call.values())
 
-# print(elem_vertical_list)
-# print(elem_horizontal_list)
-# print(elem_call_list)
-h_index = 0
-for row in elem_horizontal_list:
-    current_numbers = numbers.copy()
-    list_without_horizontal = differenc(current_numbers, row)
-    list_without_vertical = differenc_2(list_without_horizontal, elem_vertical_list[h_index])
-    list_without_cell = ""
-    v_index = 0
-    for value in row:
-        if value == "":
-            if h_index <= 2 and v_index <= 2:
-                c =0
-                print(c)
-            elif h_index <= 2 and v_index <= 5:
-                c =1
-                print(c)
-            elif h_index <= 2 and v_index <= 8:
-                c =2
-                print(c)
+def get_c(v_index, h_index):
+    if h_index <= 2 and v_index <= 2:
+        c =0
+    elif h_index <= 2 and v_index <= 5:
+        c =1
+    elif h_index <= 2 and v_index <= 8:
+        c =2
+    elif h_index <= 5 and v_index <= 2:
+        c =3
+    elif h_index <= 5 and v_index <= 5:
+        c =4
+    elif h_index <= 5 and v_index <= 8:
+        c =5
+    elif h_index <= 8 and v_index <= 2:
+        c =6
+    elif h_index <= 8 and v_index <= 5:
+        c =7
+    elif h_index <= 8 and v_index <= 8:
+        c =8
+    else:
+        c = None
+    return c
 
-            elif h_index <= 5 and v_index <= 2:
-                c =3
-                print(c)
-            elif h_index <= 5 and v_index <= 5:
-                c =4
-                print(c)
-            elif h_index <= 5 and v_index <= 8:
-                c =5
-                print(c)
-            elif h_index <= 8 and v_index <= 2:
-                c =6
-                print(c)
-            elif h_index <= 8 and v_index <= 5:
-                c =7
-                print(c)
-            elif h_index <= 8 and v_index <= 8:
-                c =8
-                print(c)
-            list_without_cell = differenc_2(list_without_vertical, elem_call_list[c])
+def find_value(row, v_index, h_index, try_val):
+    row_new = row
+    for value in row_new:
+        current_numbers = numbers.copy()
+        if value == "":
+            c = get_c(v_index, h_index)
+
+            print("INDEX_V: ",v_index)
+            print("OLD",row_new)
+            list_without_horizontal = differenc(current_numbers, row_new)
+            print("HORIZONTAL", list_without_horizontal)
+            print("VERTICAL", elem_vertical_list[v_index])
+            list_without_vertical = differenc_2(list_without_horizontal, elem_vertical_list[v_index])
+            print("VERTICLE_NEW", list_without_vertical)
+            last_list = differenc_2(list_without_vertical, elem_call_list[c])
+            last_list = [x for x in last_list if x]
+            row_new[v_index] = last_list[try_val] 
+            print("POSSIBLE",differenc_2(list_without_vertical, elem_call_list[c]))          
+            print("NEW",row_new)
+            print("==========================")
         v_index += 1
     h_index += 1
 
-    print(list_without_cell)
+
+print(elem_vertical_list)
+# print(elem_horizontal_list)
+# print(elem_call_list)
+print("++++++++++++++++")
+h_index = 0
+for row in elem_horizontal_list:
+    v_index = 0
+    try_val = 0
+    try:
+        find_value(row, v_index, h_index, try_val)
+    except IndexError:
+        try_val += 1
+        find_value(row, v_index, h_index, try_val)
+
+print(elem_horizontal_list)
 
 
 
